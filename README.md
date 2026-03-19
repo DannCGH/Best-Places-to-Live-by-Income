@@ -1,4 +1,4 @@
-# Miami Housing Affordability Map
+# Best Places to Live by Income
 
 An interactive map that scores 14 Miami neighborhoods by rental affordability against your actual financial profile. Enter your income, debts, household size, and preferences — the map updates in real time.
 
@@ -18,7 +18,11 @@ Each neighborhood gets a score from 0–100 based on how the adjusted rent compa
 
 The sidebar has three views: an **Overview** list with filter buttons, a **Detail** panel with rent breakdown and charts for a selected neighborhood, and a **Ranking** view comparing all 14 by adjusted rent.
 
-## Running it
+## Live demo
+
+Hosted on GitHub Pages — [danncgh.github.io/miami-affordability](https://danncgh.github.io/Best-Places-to-Live-by-Income)
+
+## Running locally
 
 Requires [Node.js](https://nodejs.org).
 
@@ -27,13 +31,17 @@ npm install
 npx vite
 ```
 
-Open `http://localhost:5173`. To build for deployment:
+Open `http://localhost:5173`.
 
-```bash
-npx vite build
-```
+## Deployment
 
-Output goes to `dist/`.
+Pushes to `main` automatically build and deploy via GitHub Actions. To set it up:
+
+1. Go to **Settings → Pages** in your repo
+2. Set the source to **GitHub Actions**
+3. Push to `main` — the workflow in `.github/workflows/deploy.yml` handles the rest
+
+The live URL appears in Settings → Pages after the first deploy completes.
 
 ## Project structure
 
@@ -41,6 +49,7 @@ Output goes to `dist/`.
 ├── index.html
 ├── package.json
 ├── vite.config.js
+├── .github/workflows/deploy.yml
 └── src/
     ├── main.js        entry point, App coordinator
     ├── style.css
