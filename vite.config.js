@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  build: { outDir: 'dist' },
+  base: '/Best-Places-to-Live-by-Income/',
+  build: {
+    outDir: 'dist',
+  },
 });
