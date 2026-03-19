@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Best Places to Live by Income</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+  <div class="logo-group">
+    <div>
+      <div class="logo-title">Best Places to Live <span>by Income</span></div>
+      <div class="logo-sub">Miami Housing Affordability Index</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      Live Data
+    </div>
+    <button class="profile-btn" id="profileToggle" onclick="App.toggleDrawer()">
+      <div class="avatar" id="avatarInitial">$</div>
+      <span class="btn-label">My Profile · </span><span class="income-preview" id="headerIncome">$75,000/yr</span>
+    </button>
+  </div>
+</header>
+
+<div class="app-body">
+  <div id="map"></div>
+
+  <div class="sidebar">
+
+
+    <div class="profile-drawer" id="profileDrawer">
+      <div class="drawer-header">
+        <div>
+          <div class="drawer-title">Financial Profile</div>
+          <div class="drawer-sub">Personalise your affordability map</div>
+        </div>
+        <button class="drawer-close" onclick="App.toggleDrawer()">&#x2715;</button>
+      </div>
+      <div class="drawer-body">
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Income</div>
+          <div class="field-row">
+            <div class="field-group">
+              <div class="field-label">Annual Income</div>
+              <input class="field-input" type="number" id="incomeInput" value="75000" step="5000" min="10000" max="1000000" placeholder="e.g. 75000">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Income Type <span class="optional-tag">optional</span></div>
+              <select class="field-select" id="incomeType">
+                <option value="salary">Salary</option>
+                <option value="hourly">Hourly</option>
+                <option value="freelance">Freelance / Gig</option>
+                <option value="retirement">Retirement / Fixed</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <div class="field-label">Partner Income <span class="optional-tag">optional</span></div>
+              <input class="field-input" type="number" id="partnerIncome" placeholder="e.g. 45000" min="0">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Household Size <span class="optional-tag">optional</span></div>
+              <select class="field-select" id="householdSize">
+                <option value="1">1 Person</option>
+                <option value="2" selected>2 People</option>
+                <option value="3">3 People</option>
+                <option value="4">4 People</option>
+                <option value="5">5+ People</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Monthly Debts <span class="optional-tag" style="font-size:8px;background:transparent;color:var(--text-dim);letter-spacing:1px">all optional</span></div>
+          <div class="field-row">
+            <div class="field-group">
+              <div class="field-label">Car Payment</div>
+              <input class="field-input" type="number" id="carPayment" placeholder="$0/mo" min="0">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Student Loans</div>
+              <input class="field-input" type="number" id="studentLoans" placeholder="$0/mo" min="0">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <div class="field-label">Credit Cards</div>
+              <input class="field-input" type="number" id="creditCards" placeholder="$0/mo" min="0">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Other Debts</div>
+              <input class="field-input" type="number" id="otherDebts" placeholder="$0/mo" min="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Savings &amp; Budget <span class="optional-tag" style="font-size:8px;background:transparent;color:var(--text-dim);letter-spacing:1px">all optional</span></div>
+          <div class="field-row">
+            <div class="field-group">
+              <div class="field-label">Savings / mo</div>
+              <input class="field-input" type="number" id="monthlySavings" placeholder="$0/mo" min="0">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Max Rent Budget</div>
+              <input class="field-input" type="number" id="maxRentBudget" placeholder="auto" min="0">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <div class="field-label">Unit Preference <span class="optional-tag">optional</span></div>
+              <select class="field-select" id="unitPref">
+                <option value="any">Any Size</option>
+                <option value="studio">Studio</option>
+                <option value="1bed">1-Bedroom</option>
+                <option value="2bed">2-Bedroom</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Budget Rule <span class="optional-tag">optional</span></div>
+              <select class="field-select" id="budgetRule">
+                <option value="30">30% Rule (standard)</option>
+                <option value="28">28% Rule (conservative)</option>
+                <option value="35">35% Rule (flexible)</option>
+                <option value="40">40% Rule (stretched)</option>
+                <option value="dti">DTI-Based (debts factored)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Lifestyle <span class="optional-tag" style="font-size:8px;background:transparent;color:var(--text-dim);letter-spacing:1px">all optional</span></div>
+          <div class="toggle-row">
+            <div class="toggle-label"><strong>Has Car / Needs Parking</strong><span>Adds ~$150/mo to rent cost</span></div>
+            <button class="toggle" id="toggleCar" onclick="App.togglePref('car')"></button>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label"><strong>Has Pets</strong><span>Adds ~$50/mo pet fee to rent</span></div>
+            <button class="toggle" id="togglePets" onclick="App.togglePref('pets')"></button>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label"><strong>Needs Good Schools</strong><span>Boosts school-rated neighborhoods</span></div>
+            <button class="toggle" id="toggleSchools" onclick="App.togglePref('schools')"></button>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label"><strong>Work From Home</strong><span>Prioritises quieter, larger units</span></div>
+            <button class="toggle" id="toggleWfh" onclick="App.togglePref('wfh')"></button>
+          </div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Your Summary</div>
+          <div class="profile-summary" id="profileSummary"></div>
+          <button class="apply-btn" onclick="App.applyProfile()">Apply &amp; Update Map &#x2192;</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sidebar-top">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Avg Miami Rent</div>
+          <div class="stat-value" id="avgRent">$2,840</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Rent Budget</div>
+          <div class="stat-value" id="budgetVal">$1,625</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Affordable Areas</div>
+          <div class="stat-value good" id="affordCount">&#x2014;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Burden Score</div>
+          <div class="stat-value" id="avgBurden">&#x2014;</div>
+        </div>
+      </div>
+      <div class="sidebar-tabs">
+        <button class="tab-btn active" onclick="App.setTab('overview')">Overview</button>
+        <button class="tab-btn" onclick="App.setTab('detail')">Detail</button>
+        <button class="tab-btn" onclick="App.setTab('ranking')">Ranking</button>
+      </div>
+    </div>
+    <div class="sidebar-scroll" id="sidebarContent"></div>
+
+  </div>
+</div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
